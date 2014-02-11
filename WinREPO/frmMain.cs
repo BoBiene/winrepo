@@ -77,7 +77,7 @@ namespace WinREPO
                 _pipelineExecutor.OnErrorReady -= new PipelineExecutor.ErrorReadyDelegate(PipelineExecutor_OnErrorReady);
                 _pipelineExecutor.Stop();
                 _pipelineExecutor = null;
-                System.Threading.Thread.Sleep(1000);
+                System.Threading.Thread.Sleep(100);
             }
         }
 
@@ -202,11 +202,20 @@ namespace WinREPO
             return false;
         }
 
+        private static Boolean firstTime = true;
+
         private void checkoutNextProject(int iProjectNumber)
         {
             stopPowerShellScript();
-            String strCommand = _frmOptions._strGitHubFileName + _strNewline + "cd " + txtLocalRepoDirPath.Text + _strNewline;
-            if (_currentProjectNumber > _manifestParser._manifestConfig._projectPathConfigs.Length)
+            String strCommand = "";
+            if (firstTime)
+            {
+                strCommand = _frmOptions._strGitHubFileName + _strNewline;
+                firstTime = false;
+            }
+
+            strCommand += "cd " + txtLocalRepoDirPath.Text + _strNewline;
+            if (_currentProjectNumber > _manifestParser._manifestConfig._projectPathConfigs.Length - 1)
             {
                 Console.WriteLine("All projects Checkedout as needed. RepoSync Done");
                 AppendLine("Repo Sync DONE!");
