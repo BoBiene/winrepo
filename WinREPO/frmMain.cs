@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation;
+using System.IO;
 
 namespace WinREPO
 {
@@ -30,6 +31,16 @@ namespace WinREPO
             this.ProjectCheckoutDone += frmMain_ProjectCheckoutDone;
             _powerShellRunSpace = RunspaceFactory.CreateRunspace();
             _powerShellRunSpace.Open();
+            try
+            {
+                RunspaceInvoke scriptInvoker = new RunspaceInvoke(_powerShellRunSpace);
+                scriptInvoker.Invoke("Set-ExecutionPolicy Unrestricted");
+            }
+            catch (Exception)
+            {
+                Console.WriteLine("OK! We don't have access bla bla. I will fix it soon...");
+            }
+
             _frmOptions.readRegistryKeysIfAny();
         }
 
@@ -148,6 +159,12 @@ namespace WinREPO
             _strRootDir = strGitClonePath.Substring(strGitClonePath.LastIndexOf("/") + 1);
         }
 
+        private Boolean checkIfRepoExists(String strPath)
+        {
+            Boolean result = false;
+            return result;
+        }
+
         private void btnRepoInit_Click(object sender, EventArgs e)
         {
             stopPowerShellScript();
@@ -192,7 +209,7 @@ namespace WinREPO
             }
         }
 
-        private const int MAX_PATH = 150;
+        private const int MAX_PATH = 200;
         private Boolean isPathExceedingMaxPath(String strPath)
         {
             if (strPath.Length > MAX_PATH)
@@ -269,10 +286,25 @@ namespace WinREPO
             startPowerShellScript(strCommand);
         }
 
+        private String getRepoXMLFilePath(String strBasePath)
+        {
+            String strResult = "";
+            if (File.Exists(strBasePath + "\\.repo\\default.xml"))
+            {
+                strResult = strBasePath + "\\.repo\\default.xml";
+            }
+            else if (File.Exists(strBasePath + "\\.repo\\manifest.xml"))
+            {
+                strResult = strBasePath + "\\.repo\\manifest.xml";
+            }
+            return strResult;
+        }
+
         private void btnRepoSync_Click(object sender, EventArgs e)
         {
             stopPowerShellScript();
-            String strGitClonePath = txtLocalRepoDirPath.Text + "\\.repo\\default.xml";
+
+            String strGitClonePath = getRepoXMLFilePath(txtLocalRepoDirPath.Text);
 
             AppendLine("Loading Manifest file... ");
 

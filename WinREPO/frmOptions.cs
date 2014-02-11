@@ -54,7 +54,6 @@ namespace WinREPO
             }
         }
 
-/*
         private void startPowerShellPrompt()
         {
             if (_strPowerShellPath.Length > 0)
@@ -62,12 +61,11 @@ namespace WinREPO
                 System.Diagnostics.Process _process = new System.Diagnostics.Process();
                 _process.StartInfo.FileName = _strPowerShellPath;
                 _process.StartInfo.Verb = "runas";
-                _process.StartInfo.Arguments = _strPowerShellExePolicyArg;
+                _process.StartInfo.Arguments = "-ExecutionPolicy remotesigned -noexit \" & \"set-executionpolicy remotesigned\r\n";
                 _process.StartInfo.UseShellExecute = true;
                 _process.Start();
             }
         }
-*/
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (_strGitHubFileName == null)
@@ -92,6 +90,12 @@ namespace WinREPO
                 _strPowerShellPath = dlgSelectFile.FileName;
                 txtPowerShellPath.Text = _strPowerShellPath;
             }
+        }
+
+        private void btnFixPowerShell_Click(object sender, EventArgs e)
+        {
+            MessageBox.Show("Type Exit in the resulting command prompt or close the window. This process needs to be done only once!");
+            startPowerShellPrompt();
         }
     }
 }

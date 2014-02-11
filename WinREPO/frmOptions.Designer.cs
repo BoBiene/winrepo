@@ -36,6 +36,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.txtPowerShellPath = new System.Windows.Forms.TextBox();
             this.btnBrowsePowerShellPath = new System.Windows.Forms.Button();
+            this.btnFixPowerShell = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -105,12 +106,23 @@
             this.btnBrowsePowerShellPath.UseVisualStyleBackColor = true;
             this.btnBrowsePowerShellPath.Click += new System.EventHandler(this.btnBrowsePowerShellPath_Click);
             // 
+            // btnFixPowerShell
+            // 
+            this.btnFixPowerShell.Location = new System.Drawing.Point(105, 72);
+            this.btnFixPowerShell.Name = "btnFixPowerShell";
+            this.btnFixPowerShell.Size = new System.Drawing.Size(113, 23);
+            this.btnFixPowerShell.TabIndex = 8;
+            this.btnFixPowerShell.Text = "Fix PowerShell";
+            this.btnFixPowerShell.UseVisualStyleBackColor = true;
+            this.btnFixPowerShell.Click += new System.EventHandler(this.btnFixPowerShell_Click);
+            // 
             // frmOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(427, 107);
             this.ControlBox = false;
+            this.Controls.Add(this.btnFixPowerShell);
             this.Controls.Add(this.btnBrowsePowerShellPath);
             this.Controls.Add(this.txtPowerShellPath);
             this.Controls.Add(this.label2);
@@ -135,5 +147,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox txtPowerShellPath;
         private System.Windows.Forms.Button btnBrowsePowerShellPath;
+        private System.Windows.Forms.Button btnFixPowerShell;
     }
 }
