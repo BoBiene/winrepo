@@ -45,7 +45,6 @@ namespace WinREPO
 
             _frmOptions.readRegistryKeysIfAny();
 
-            /* TODO: Replace the static path with the one in the registry. Try to find it yourself...*/
             String strInit = Directory.GetCurrentDirectory() + "\\gitshell.ps1 ";
             strInit += "-gitPath \"" + _frmOptions._strGitFolderPath + "\"";
             Console.WriteLine("Current Working Directory: " + strInit);
@@ -170,9 +169,23 @@ namespace WinREPO
         private Boolean checkIfRepoExists(String strPath)
         {
             Boolean result = false;
+            if (Directory.Exists(strPath))
+            {
+                result = true;
+            }
             return result;
         }
 
+        private Boolean IsDirectoryEmpty(string path)
+        {
+            IEnumerable<string> items = Directory.EnumerateFileSystemEntries(path);
+            using (IEnumerator<string> en = items.GetEnumerator())
+            {
+                return !en.MoveNext();
+            }
+        }
+
+        private const String _strCDRepo = "cd .repo";
         private void btnRepoInit_Click(object sender, EventArgs e)
         {
             stopPowerShellScript();
@@ -188,12 +201,27 @@ namespace WinREPO
                 strGitClonePath = strGitClonePath.Substring(0, txtRepoURL.Text.IndexOf("-b"));
             }
 
-            String strCommand = "cd " + txtLocalRepoDirPath.Text + _strNewline + "git clone " +
-                strGitClonePath + _strGitProgress + _strNewline + "cd " + _strRootDir +
-                _strNewline + strGitTag + _strNewline + "cd .." + _strNewline +
-                "mv " + _strRootDir + ".repo" + _strNewline +_strHideRepoDir + _strNewline;
-            AppendLine(strCommand);
-            startPowerShellScript(strCommand);
+            /* Do a git pull if a directory (.repo) exits in the path i.e. there is an already existing
+             repo. Otherwise do a new git clone. */
+            String strCommand = "cd " + txtLocalRepoDirPath.Text + _strNewline;
+            if (!IsDirectoryEmpty(txtLocalRepoDirPath.Text))
+            {
+                if((MessageBox.Show("Selected Repo Directory is NOT EMPTY! Do you still want to Continue?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes))
+                {
+                    if (checkIfRepoExists(txtLocalRepoDirPath.Text + "\\.repo"))
+                    {
+                        strCommand += _strCDRepo + _strNewline + strGitTag + _strNewline;
+                    }
+                    else
+                    {
+                        strCommand += "git clone " + strGitClonePath + _strGitProgress + _strNewline + "cd " + _strRootDir +
+                            _strNewline + strGitTag + _strNewline + "cd .." + _strNewline +
+                            "mv " + _strRootDir + ".repo" + _strNewline + _strHideRepoDir + _strNewline;
+                    }
+                    AppendLine(strCommand);
+                    startPowerShellScript(strCommand);
+                }
+            }
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
