@@ -12,15 +12,6 @@ using System.IO;
 
 namespace WinREPO
 {
-    internal static class NativeMethods
-    {
-        // Import SetThreadExecutionState Win32 API and necessary flags
-        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
-        public static extern uint SetThreadExecutionState(uint esFlags);
-        public const uint ES_CONTINUOUS = 0x80000000;
-        public const uint ES_SYSTEM_REQUIRED = 0x00000001;
-    }
-
     public partial class frmMain : Form
     {
         private frmOptions _frmOptions = new frmOptions();
@@ -342,5 +333,14 @@ namespace WinREPO
             AboutWinREPO aboutFrm = new AboutWinREPO();
             aboutFrm.ShowDialog();
         }
+    }
+
+    internal static class NativeMethods
+    {
+        // Import SetThreadExecutionState Win32 API and necessary flags
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        public static extern uint SetThreadExecutionState(uint esFlags);
+        public const uint ES_CONTINUOUS = 0x80000000;
+        public const uint ES_SYSTEM_REQUIRED = 0x00000001;
     }
 }
