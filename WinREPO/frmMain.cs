@@ -190,7 +190,7 @@ namespace WinREPO
             String strCommand = "cd " + txtLocalRepoDirPath.Text + _strNewline + "git clone " +
                 strGitClonePath + _strGitProgress + _strNewline + "cd " + _strRootDir +
                 _strNewline + strGitTag + _strNewline + "cd .." + _strNewline +
-                "mv " + _strRootDir + " .repo" + _strNewline +_strHideRepoDir + _strNewline;
+                "mv " + _strRootDir + ".repo" + _strNewline +_strHideRepoDir + _strNewline;
             AppendLine(strCommand);
             startPowerShellScript(strCommand);
         }
