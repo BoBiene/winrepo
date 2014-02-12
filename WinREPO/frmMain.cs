@@ -44,6 +44,11 @@ namespace WinREPO
             }
 
             _frmOptions.readRegistryKeysIfAny();
+
+            /* TODO: Replace the static path with the one in the registry. Try to find it yourself...*/
+            String strInit = Directory.GetCurrentDirectory() + "\\gitshell.ps1 ";
+            Console.WriteLine("Current Working Directory: " + strInit);
+            startPowerShellScript(strInit + "-gitPath \"C:\\Program Files (x86)\\Git\"");
         }
 
         private void frmMain_ProjectCheckoutDone(object sender, EventArgs e)
@@ -182,8 +187,7 @@ namespace WinREPO
                 strGitClonePath = strGitClonePath.Substring(0, txtRepoURL.Text.IndexOf("-b"));
             }
 
-            String strCommand = _frmOptions._strGitHubFileName + _strNewline +
-                "cd " + txtLocalRepoDirPath.Text + _strNewline + "git clone " +
+            String strCommand = "cd " + txtLocalRepoDirPath.Text + _strNewline + "git clone " +
                 strGitClonePath + _strGitProgress + _strNewline + "cd " + _strRootDir +
                 _strNewline + strGitTag + _strNewline + "cd .." + _strNewline +
                 "mv " + _strRootDir + " .repo" + _strNewline +_strHideRepoDir + _strNewline;
@@ -221,17 +225,10 @@ namespace WinREPO
             return false;
         }
 
-        private static Boolean firstTime = true;
-
         private void checkoutNextProject(int iProjectNumber)
         {
             stopPowerShellScript();
             String strCommand = "";
-            if (firstTime)
-            {
-                strCommand = _frmOptions._strGitHubFileName + _strNewline;
-                firstTime = false;
-            }
 
             strCommand += "cd " + txtLocalRepoDirPath.Text + _strNewline;
             if (_currentProjectNumber > _manifestParser._manifestConfig._projectPathConfigs.Length - 1)
