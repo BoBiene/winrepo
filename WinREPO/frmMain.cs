@@ -12,6 +12,15 @@ using System.IO;
 
 namespace WinREPO
 {
+    internal static class NativeMethods
+    {
+        // Import SetThreadExecutionState Win32 API and necessary flags
+        [System.Runtime.InteropServices.DllImport("kernel32.dll")]
+        public static extern uint SetThreadExecutionState(uint esFlags);
+        public const uint ES_CONTINUOUS = 0x80000000;
+        public const uint ES_SYSTEM_REQUIRED = 0x00000001;
+    }
+
     public partial class frmMain : Form
     {
         private frmOptions _frmOptions = new frmOptions();
@@ -20,6 +29,8 @@ namespace WinREPO
         private PipelineExecutor _pipelineExecutor;
 
         private event EventHandler ProjectCheckoutDone;
+
+        private uint _threadExecutionState;
 
         private int _currentProjectNumber = 0;
         private Boolean _isRepoSyncing = false;
@@ -303,6 +314,13 @@ namespace WinREPO
         private void btnRepoSync_Click(object sender, EventArgs e)
         {
             stopPowerShellScript();
+
+            _threadExecutionState = NativeMethods.SetThreadExecutionState(NativeMethods.ES_SYSTEM_REQUIRED | NativeMethods.ES_CONTINUOUS);
+            if (0 == _threadExecutionState)
+            {
+                MessageBox.Show("The system may go to sleep and disconnect from network. Please be aware of long running syncs...",
+                    "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
 
             String strGitClonePath = getRepoXMLFilePath(txtLocalRepoDirPath.Text);
 
