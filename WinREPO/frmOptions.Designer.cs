@@ -37,6 +37,7 @@
             this.txtPowerShellPath = new System.Windows.Forms.TextBox();
             this.btnBrowsePowerShellPath = new System.Windows.Forms.Button();
             this.btnFixPowerShell = new System.Windows.Forms.Button();
+            this.dlgSelectDir = new System.Windows.Forms.FolderBrowserDialog();
             this.SuspendLayout();
             // 
             // label1
@@ -44,9 +45,9 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(13, 13);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(84, 13);
+            this.label1.Size = new System.Drawing.Size(66, 13);
             this.label1.TabIndex = 0;
-            this.label1.Text = "GitHub shell.ps1";
+            this.label1.Text = "msysgit Path";
             // 
             // txtGitShellPath
             // 
@@ -148,5 +149,6 @@
         private System.Windows.Forms.TextBox txtPowerShellPath;
         private System.Windows.Forms.Button btnBrowsePowerShellPath;
         private System.Windows.Forms.Button btnFixPowerShell;
+        private System.Windows.Forms.FolderBrowserDialog dlgSelectDir;
     }
 }

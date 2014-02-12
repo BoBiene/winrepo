@@ -26,7 +26,7 @@ namespace WinREPO
         private const String _strKeyName = _strUserRoot + "\\" + _strRegKey;
 
         //private const String strPowerShellPath = "%SystemRoot%\\system32\\WindowsPowerShell\\v1.0\\powershell.exe ";
-        public String _strGitHubFileName { get; set; }
+        public String _strGitFolderPath { get; set; }
         public String _strPowerShellPath { get; set; }
 
         public frmOptions()
@@ -37,20 +37,19 @@ namespace WinREPO
 
         public void readRegistryKeysIfAny()
         {
-            _strGitHubFileName = (String) Registry.GetValue(_strKeyName, _strRegGitHubPath, "");
+            _strGitFolderPath = (String)Registry.GetValue(_strKeyName, _strRegGitHubPath, "");
             _strPowerShellPath = (String) Registry.GetValue(_strKeyName, _strRegPowerShellPath, "");
-            txtGitShellPath.Text = _strGitHubFileName;
+            txtGitShellPath.Text = _strGitFolderPath;
             txtPowerShellPath.Text = _strPowerShellPath;
         }
 
         private void btnBrowseGitShellPath_Click(object sender, EventArgs e)
         {
-            dlgSelectFile.FileName = "shell.ps1";
-            dlgSelectFile.InitialDirectory = "C:\\Users";
-            if (dlgSelectFile.ShowDialog() == DialogResult.OK)
+            dlgSelectDir.RootFolder = Environment.SpecialFolder.ProgramFilesX86;
+            if (dlgSelectDir.ShowDialog() == DialogResult.OK)
             {
-                _strGitHubFileName = dlgSelectFile.FileName;
-                txtGitShellPath.Text = _strGitHubFileName;
+                _strGitFolderPath = dlgSelectDir.SelectedPath;
+                txtGitShellPath.Text = _strGitFolderPath;
             }
         }
 
@@ -68,15 +67,15 @@ namespace WinREPO
         }
         private void btnSave_Click(object sender, EventArgs e)
         {
-            if (_strGitHubFileName == null)
+            if (_strGitFolderPath == null)
             {
-                _strGitHubFileName = txtGitShellPath.Text;
+                _strGitFolderPath = txtGitShellPath.Text;
             }
             if (_strPowerShellPath == null)
             {
                 _strPowerShellPath = txtPowerShellPath.Text;
             }
-            Registry.SetValue(_strKeyName, _strRegGitHubPath, _strGitHubFileName);
+            Registry.SetValue(_strKeyName, _strRegGitHubPath, _strGitFolderPath);
             Registry.SetValue(_strKeyName, _strRegPowerShellPath, _strPowerShellPath);
             this.Hide();
         }

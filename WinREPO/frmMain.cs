@@ -47,8 +47,9 @@ namespace WinREPO
 
             /* TODO: Replace the static path with the one in the registry. Try to find it yourself...*/
             String strInit = Directory.GetCurrentDirectory() + "\\gitshell.ps1 ";
+            strInit += "-gitPath \"" + _frmOptions._strGitFolderPath + "\"";
             Console.WriteLine("Current Working Directory: " + strInit);
-            startPowerShellScript(strInit + "-gitPath \"C:\\Program Files (x86)\\Git\"");
+            startPowerShellScript(strInit);
         }
 
         private void frmMain_ProjectCheckoutDone(object sender, EventArgs e)
