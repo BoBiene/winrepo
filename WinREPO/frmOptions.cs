@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using System.IO;
 
 /*
  1. Open power Shell using Admin Priviledges
@@ -25,13 +26,16 @@ namespace WinREPO
         private const String _strRegPowerShellPath = "PowerShellPath";
         private const String _strKeyName = _strUserRoot + "\\" + _strRegKey;
 
+        private frmMain _frmMainInstanceHandle = null;
+
         //private const String strPowerShellPath = "%SystemRoot%\\system32\\WindowsPowerShell\\v1.0\\powershell.exe ";
         public String _strGitFolderPath { get; set; }
         public String _strPowerShellPath { get; set; }
 
-        public frmOptions()
+        public frmOptions(frmMain parent)
         {
             InitializeComponent();
+            _frmMainInstanceHandle = parent;
             readRegistryKeysIfAny();
         }
 
@@ -95,6 +99,35 @@ namespace WinREPO
         {
             MessageBox.Show("Type Exit in the resulting command prompt or close the window. This process needs to be done only once!");
             startPowerShellPrompt();
+        }
+
+        private void btnFixSSHConfig_Click(object sender, EventArgs e)
+        {
+            String homePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            homePath += "\\.ssh";
+            String strConfigFileName = "config";
+            String strConfigFilePath = homePath + "\\" + strConfigFileName;
+            Console.WriteLine("SSH Config path is :" + strConfigFilePath);
+            if (File.Exists(strConfigFilePath))
+            {
+                /* Config File Already exists. Lets try to write to the end of the config file. Maybe create a backup first. */
+                if ((MessageBox.Show("SSH Config file Found! A backup of the file will be created and modifications done. Continue?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No))
+                {
+                    return;
+                }
+                /* Create a backup now... */
+                File.Copy(strConfigFilePath, homePath + "\\" + "WinREPO_ssh_backup_config", true);
+            }
+            /* Now write to the file as needed. We will execute a PowerShell Script to do so. Use the utility function in frmMain... */
+            String strCommand = "\"" + Directory.GetCurrentDirectory() + "\\modifySSHConfig.ps1 " + "-configPath " + strConfigFilePath + "\"" + frmMain._strNewline;
+            Console.WriteLine("SSH Config Fix Command is :" + strCommand);
+            _frmMainInstanceHandle.startPowerShellScript(strCommand);
+            MessageBox.Show("SSH Config has been modified to work with WinREPO at " + strConfigFilePath + ". Please restore the backup when you uninstall WinREPO in future!");
+        }
+
+        private void btnCancel_Click(object sender, EventArgs e)
+        {
+            this.Hide();
         }
     }
 }

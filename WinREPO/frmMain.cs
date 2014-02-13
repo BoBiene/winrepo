@@ -14,7 +14,7 @@ namespace WinREPO
 {
     public partial class frmMain : Form
     {
-        private frmOptions _frmOptions = new frmOptions();
+        private frmOptions _frmOptions = null;
         private ManifestParser _manifestParser;
         private Runspace _powerShellRunSpace;
         private PipelineExecutor _pipelineExecutor;
@@ -27,6 +27,14 @@ namespace WinREPO
         private Boolean _isRepoSyncing = false;
         private Boolean _movDirectoryToRightLocation = false;
         private const String _tempCheckoutPath = "C:\\tmpRepo";
+
+        private String _strRootDir = "";
+
+        private const String _strSetExecutionPolicy = "set-executionpolicy remotesigned\r\n";
+        public const String _strNewline = "\r\n";
+        private const String _strHideRepoDir = "attrib +h .repo";
+        private const String _strGitProgress = " --progress";
+        private const String _strCDRepo = "cd .repo";
 
         private void initializeWinREPO()
         {
@@ -43,10 +51,11 @@ namespace WinREPO
                 Console.WriteLine("OK! We don't have access bla bla. I will fix it soon...");
             }
 
+            _frmOptions = new frmOptions(this);
             _frmOptions.readRegistryKeysIfAny();
 
-            String strInit = Directory.GetCurrentDirectory() + "\\gitshell.ps1 ";
-            strInit += "-gitPath \"" + _frmOptions._strGitFolderPath + "\"";
+            String strInit = "\"" + Directory.GetCurrentDirectory() + "\\gitshell.ps1 ";
+            strInit += "-gitPath " + _frmOptions._strGitFolderPath + "\"" + _strNewline;
             Console.WriteLine("Current Working Directory: " + strInit);
             startPowerShellScript(strInit);
         }
@@ -76,7 +85,7 @@ namespace WinREPO
             initializeWinREPO();
         }
 
-        private void startPowerShellScript(String strScript)
+        public void startPowerShellScript(String strScript)
         {
             _pipelineExecutor = new PipelineExecutor(_powerShellRunSpace, this, strScript);
             _pipelineExecutor.OnDataEnd += new PipelineExecutor.DataEndDelegate(PipelineExecutor_OnDataEnd);
@@ -148,13 +157,6 @@ namespace WinREPO
             _frmOptions.ShowDialog();
         }
 
-        private const String _strSetExecutionPolicy = "set-executionpolicy remotesigned\r\n";
-        private const String _strNewline = "\r\n";
-        private const String _strStreamRedirect = " | Out-String -stream";
-        private const String _strHideRepoDir = "attrib +h .repo";
-        private String _strRootDir = "";
-        private const String _strGitProgress = " --progress";
-
         private void setRootDirectory()
         {
             String strGitClonePath = txtRepoURL.Text;
@@ -185,7 +187,6 @@ namespace WinREPO
             }
         }
 
-        private const String _strCDRepo = "cd .repo";
         private void btnRepoInit_Click(object sender, EventArgs e)
         {
             stopPowerShellScript();
@@ -206,22 +207,23 @@ namespace WinREPO
             String strCommand = "cd " + txtLocalRepoDirPath.Text + _strNewline;
             if (!IsDirectoryEmpty(txtLocalRepoDirPath.Text))
             {
-                if((MessageBox.Show("Selected Repo Directory is NOT EMPTY! Do you still want to Continue?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes))
+                if((MessageBox.Show("Selected Repo Directory is NOT EMPTY! Do you still want to Continue?", "", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No))
                 {
-                    if (checkIfRepoExists(txtLocalRepoDirPath.Text + "\\.repo"))
-                    {
-                        strCommand += _strCDRepo + _strNewline + strGitTag + _strNewline;
-                    }
-                    else
-                    {
-                        strCommand += "git clone " + strGitClonePath + _strGitProgress + _strNewline + "cd " + _strRootDir +
-                            _strNewline + strGitTag + _strNewline + "cd .." + _strNewline +
-                            "mv " + _strRootDir + ".repo" + _strNewline + _strHideRepoDir + _strNewline;
-                    }
-                    AppendLine(strCommand);
-                    startPowerShellScript(strCommand);
+                    return;
                 }
             }
+            if (checkIfRepoExists(txtLocalRepoDirPath.Text + "\\.repo"))
+            {
+                strCommand += _strCDRepo + _strNewline + "git pull" + _strNewline + strGitTag + _strNewline;
+            }
+            else
+            {
+                strCommand += "git clone " + strGitClonePath + _strGitProgress + _strNewline + "cd " + _strRootDir +
+                    _strNewline + strGitTag + _strNewline + "cd .." + _strNewline +
+                    "mv " + _strRootDir + ".repo" + _strNewline + _strHideRepoDir + _strNewline;
+            }
+            AppendLine(strCommand);
+            startPowerShellScript(strCommand);
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)

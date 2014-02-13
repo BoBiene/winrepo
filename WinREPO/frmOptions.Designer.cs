@@ -38,6 +38,8 @@
             this.btnBrowsePowerShellPath = new System.Windows.Forms.Button();
             this.btnFixPowerShell = new System.Windows.Forms.Button();
             this.dlgSelectDir = new System.Windows.Forms.FolderBrowserDialog();
+            this.btnFixSSHConfig = new System.Windows.Forms.Button();
+            this.btnCancel = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -109,7 +111,7 @@
             // 
             // btnFixPowerShell
             // 
-            this.btnFixPowerShell.Location = new System.Drawing.Point(105, 72);
+            this.btnFixPowerShell.Location = new System.Drawing.Point(90, 72);
             this.btnFixPowerShell.Name = "btnFixPowerShell";
             this.btnFixPowerShell.Size = new System.Drawing.Size(113, 23);
             this.btnFixPowerShell.TabIndex = 8;
@@ -117,12 +119,34 @@
             this.btnFixPowerShell.UseVisualStyleBackColor = true;
             this.btnFixPowerShell.Click += new System.EventHandler(this.btnFixPowerShell_Click);
             // 
+            // btnFixSSHConfig
+            // 
+            this.btnFixSSHConfig.Location = new System.Drawing.Point(209, 72);
+            this.btnFixSSHConfig.Name = "btnFixSSHConfig";
+            this.btnFixSSHConfig.Size = new System.Drawing.Size(101, 23);
+            this.btnFixSSHConfig.TabIndex = 9;
+            this.btnFixSSHConfig.Text = "Fix SSHConfig";
+            this.btnFixSSHConfig.UseVisualStyleBackColor = true;
+            this.btnFixSSHConfig.Click += new System.EventHandler(this.btnFixSSHConfig_Click);
+            // 
+            // btnCancel
+            // 
+            this.btnCancel.Location = new System.Drawing.Point(345, 72);
+            this.btnCancel.Name = "btnCancel";
+            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.TabIndex = 10;
+            this.btnCancel.Text = "Cancel";
+            this.btnCancel.UseVisualStyleBackColor = true;
+            this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+            // 
             // frmOptions
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(427, 107);
             this.ControlBox = false;
+            this.Controls.Add(this.btnCancel);
+            this.Controls.Add(this.btnFixSSHConfig);
             this.Controls.Add(this.btnFixPowerShell);
             this.Controls.Add(this.btnBrowsePowerShellPath);
             this.Controls.Add(this.txtPowerShellPath);
@@ -150,5 +174,7 @@
         private System.Windows.Forms.Button btnBrowsePowerShellPath;
         private System.Windows.Forms.Button btnFixPowerShell;
         private System.Windows.Forms.FolderBrowserDialog dlgSelectDir;
+        private System.Windows.Forms.Button btnFixSSHConfig;
+        private System.Windows.Forms.Button btnCancel;
     }
 }
