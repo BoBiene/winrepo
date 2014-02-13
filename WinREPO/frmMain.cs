@@ -54,8 +54,8 @@ namespace WinREPO
             _frmOptions = new frmOptions(this);
             _frmOptions.readRegistryKeysIfAny();
 
-            String strInit = "\"" + Directory.GetCurrentDirectory() + "\\gitshell.ps1 ";
-            strInit += "-gitPath " + _frmOptions._strGitFolderPath + "\"" + _strNewline;
+            String strInit = "& \"" + Directory.GetCurrentDirectory() + "\\gitshell.ps1\" ";
+            strInit += "-gitPath \"" + _frmOptions._strGitFolderPath + "\"" + _strNewline;
             Console.WriteLine("Current Working Directory: " + strInit);
             startPowerShellScript(strInit);
 
@@ -198,6 +198,7 @@ namespace WinREPO
             stopPowerShellScript();
             String strGitTag = "";
             String strGitClonePath = txtRepoURL.Text;
+
             setRootDirectory();
             if (txtRepoURL.Text.Contains("tags"))
             {

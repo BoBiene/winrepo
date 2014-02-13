@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("WinREPO")]
-[assembly: AssemblyDescription("Repo For Windows! No more messing around with cygwin, go native on WinBLOWS!")]
+[assembly: AssemblyDescription("Repo For Windows! No more messing around with cygwin, go native on Winows!")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("http://www.naresh.se/")]
 [assembly: AssemblyProduct("WinREPO")]
