@@ -221,7 +221,7 @@ namespace WinREPO
             }
             if (checkIfRepoExists(txtLocalRepoDirPath.Text + "\\.repo"))
             {
-                strCommand += _strCDRepo + _strNewline + "git pull" + _strNewline + strGitTag + _strNewline;
+                strCommand += _strCDRepo + _strNewline + "git pull" + _strNewline + strGitTag + _strNewline + "cd .." + _strNewline;
             }
             else
             {
@@ -229,6 +229,10 @@ namespace WinREPO
                     _strNewline + strGitTag + _strNewline + "cd .." + _strNewline +
                     "mv " + _strRootDir + ".repo" + _strNewline + _strHideRepoDir + _strNewline;
             }
+            /* At both places we are back in the directory where the .repo is located.
+             Now we need to create a manifests directory and put the xml file as a default.xml in there.
+             * No need to check if the directory is there since we will just get an error and we continue */
+            strCommand += _strCDRepo + _strNewline + "mkdir manifests" + _strNewline + "cp *.xml manifests\\default.xml" + _strNewline; 
             AppendLine(strCommand);
             startPowerShellScript(strCommand);
         }
