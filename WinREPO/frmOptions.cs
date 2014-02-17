@@ -119,7 +119,7 @@ namespace WinREPO
                 File.Copy(strConfigFilePath, homePath + "\\" + "WinREPO_ssh_backup_config", true);
             }
             /* Now write to the file as needed. We will execute a PowerShell Script to do so. Use the utility function in frmMain... */
-            String strCommand = "\"" + Directory.GetCurrentDirectory() + "\\modifySSHConfig.ps1 " + "-configPath " + strConfigFilePath + "\"" + frmMain._strNewline;
+            String strCommand = "& \"" + Directory.GetCurrentDirectory() + "\\modifySSHConfig.ps1\" -configPath \"" + strConfigFilePath + "\"" + frmMain._strNewline;
             Console.WriteLine("SSH Config Fix Command is :" + strCommand);
             _frmMainInstanceHandle.startPowerShellScript(strCommand);
             MessageBox.Show("SSH Config has been modified to work with WinREPO at " + strConfigFilePath + ". Please restore the backup when you uninstall WinREPO in future!");

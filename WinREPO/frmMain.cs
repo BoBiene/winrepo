@@ -232,7 +232,9 @@ namespace WinREPO
             /* At both places we are back in the directory where the .repo is located.
              Now we need to create a manifests directory and put the xml file as a default.xml in there.
              * No need to check if the directory is there since we will just get an error and we continue */
-            strCommand += _strCDRepo + _strNewline + "mkdir manifests" + _strNewline + "cp *.xml manifests\\default.xml" + _strNewline; 
+            strCommand += _strCDRepo + _strNewline + "mkdir manifests" + _strNewline + "cp *.xml manifests\\default.xml" + _strNewline;
+            /* Now come back to the .repo folder and create a manifests.git where all the .git should be copied */
+
             AppendLine(strCommand);
             startPowerShellScript(strCommand);
         }

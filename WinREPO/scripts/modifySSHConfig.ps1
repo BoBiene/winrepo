@@ -1,6 +1,7 @@
- [CmdletBinding()]
+[CmdletBinding()]
 param([string]$configPath = "")
 
-echo "`r`nUserKnownHostsFile=/dev/null" >> "$configPath"
-echo "Host *" >> "$configPath"
-echo "    StrictHostKeyChecking no" >> "$configPath"
+Add-Content "$configPath" "UserKnownHostsFile=/dev/null" -Encoding ASCII
+Add-Content "$configPath" "Host *" -Encoding ASCII
+Add-Content "$configPath" "    StrictHostKeyChecking no" -Encoding ASCII
+
