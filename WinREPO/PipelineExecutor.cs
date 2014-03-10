@@ -1,3 +1,34 @@
+/*
+    WinREPO - Repo For Windows! No more messing around with cygwin, go native on Winows!
+    Copyright (C) 2014  Naresh Mehta naresh.mehta@gmail.com
+
+    This file is part of WinREPO.
+
+    Original file licensed under The Code Project Open License available at
+    http://www.codeproject.com/info/cpol10.aspx.
+
+    Original Source code for this file is available from
+    http://www.codeproject.com/Articles/18409/Asynchronously-Execute-PowerShell-Scripts-from-C
+    and was written by jpmik. A copy of CPOL has been included with WinREPO.
+
+    This is the only file which is dual-licensed under both CPOL and GPLv3 in WinREPO.
+
+    WinREPO is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    WinREPO is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with WinREPO.  If not, see <http://www.gnu.org/licenses/>. Or
+    write to the Free Software Foundation, Inc., 51 Franklin Street, 
+    Fifth Floor, Boston, MA 02110-1301  USA
+ */
+
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
