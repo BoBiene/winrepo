@@ -46,12 +46,16 @@ namespace WinREPO
         public String _strBranch;
         public String _strRemoteName;
         public String _strRevision;
+
+        /* Only used for implementing the remove-project directive in repo manifest */
+        public Boolean _bRemoveProject;
     }
 
     public class ManifestConfigs
     {
         public RemoteServerConfigs[] _remoteServerConfigs;
         public ProjectPathConfigs[] _projectPathConfigs;
+
         /* Optional revision for the default remote */
         public String _strDefaultRevision;
         public String _strDefaultRemote;
@@ -66,7 +70,8 @@ namespace WinREPO
         private const String _strManifest = "manifest";
         private const String _strRemote = "remote";
         private const String _strDefault = "default";
-        private const String _strproject = "project";
+        private const String _strProject = "project";
+        private const String _strRemoveProject = "remove-project";
 
         private int getCountOfNodes(String strNodeNames)
         {
@@ -77,20 +82,39 @@ namespace WinREPO
 
         private void parseProjectConfigs()
         {
-            int iCountOfProjectConfigs = getCountOfNodes(_strManifest + "/" + _strproject);
+            int iCountOfProjectConfigs = getCountOfNodes(_strManifest + "/" + _strProject);
             Console.WriteLine("No Of ProjectConfigs = " + iCountOfProjectConfigs);
 
-            _manifestConfig._projectPathConfigs = new ProjectPathConfigs[iCountOfProjectConfigs];
+            int iCountOfRemoveConfigs = getCountOfNodes(_strManifest + "/" + _strRemoveProject);
+            Console.WriteLine("No Of ProjectConfigs = " + iCountOfRemoveConfigs);
+
+            /* Total number of Project configs = No. of Remove project configs + No. of project configs */
+            _manifestConfig._projectPathConfigs = new ProjectPathConfigs[iCountOfProjectConfigs + iCountOfRemoveConfigs];
             int count = 0;
 
-            var nodes = _xmlManifest.Element(_strManifest).Elements(_strproject);
+            /* First parse the project configs */
+            var nodes = _xmlManifest.Element(_strManifest).Elements(_strProject);
             foreach (XElement item in nodes)
             {
                 _manifestConfig._projectPathConfigs[count] = new ProjectPathConfigs();
 
-                _manifestConfig._projectPathConfigs[count]._strPath = item.Attribute("path").Value;
-                _manifestConfig._projectPathConfigs[count]._strName = item.Attribute("name").Value;
-
+                _manifestConfig._projectPathConfigs[count]._bRemoveProject = false;
+                try
+                {
+                    _manifestConfig._projectPathConfigs[count]._strPath = item.Attribute("path").Value;
+                }
+                catch (Exception)
+                {
+                    _manifestConfig._projectPathConfigs[count]._strPath = null;
+                }
+                try
+                {
+                    _manifestConfig._projectPathConfigs[count]._strName = item.Attribute("name").Value;
+                }
+                catch (Exception)
+                {
+                    _manifestConfig._projectPathConfigs[count]._strName = null;
+                }
                 try
                 {
                     _manifestConfig._projectPathConfigs[count]._strRemoteName = item.Attribute("remote").Value;
@@ -115,6 +139,17 @@ namespace WinREPO
                 {
                     _manifestConfig._projectPathConfigs[count]._strRevision = null;
                 }
+
+                count++;
+            }
+
+            /* Now parse the remove-project configs. Only name is needed */
+            nodes = _xmlManifest.Element(_strManifest).Elements(_strRemoveProject);
+            foreach (XElement item in nodes)
+            {
+                _manifestConfig._projectPathConfigs[count] = new ProjectPathConfigs();
+                _manifestConfig._projectPathConfigs[count]._strName = item.Attribute("name").Value;
+                _manifestConfig._projectPathConfigs[count]._bRemoveProject = true;
 
                 count++;
             }

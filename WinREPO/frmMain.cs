@@ -76,16 +76,16 @@ namespace WinREPO
             _frmOptions = new frmOptions(this);
             _frmOptions.readRegistryKeysIfAny();
 
-            String strInit = "& \"" + Directory.GetCurrentDirectory() + "\\gitshell.ps1\" ";
-            strInit += "-gitPath \"" + _frmOptions._strGitFolderPath + "\"" + _strNewline;
-            Console.WriteLine("Current Working Directory: " + strInit);
-            startPowerShellScript(strInit);
-
-            if (_frmOptions._strGitFolderPath == "" || _frmOptions._strPowerShellPath == "")
+            if (_frmOptions._strGitFolderPath.Length < 1 || _frmOptions._strPowerShellPath.Length < 1)
             {
                 MessageBox.Show("Please Setup the proper variables in Settings and fix your PowerShell and SSHConfigs. Otherwise WinREPO will not work!!!");
                 _frmOptions.ShowDialog();
             }
+
+            String strInit = "& \"" + Directory.GetCurrentDirectory() + "\\gitshell.ps1\" ";
+            strInit += "-gitPath \"" + _frmOptions._strGitFolderPath + "\"" + _strNewline;
+            Console.WriteLine("Current Working Directory: " + strInit);
+            startPowerShellScript(strInit);
         }
 
         private void frmMain_ProjectCheckoutDone(object sender, EventArgs e)
@@ -140,7 +140,10 @@ namespace WinREPO
         private void AppendLine(string line)
         {
             listBoxChanged = true;
-            if (listBoxOutput.Items.Count > 1000) listBoxOutput.Items.RemoveAt(0);
+            if (listBoxOutput.Items.Count > 200)
+            {
+                listBoxOutput.Items.RemoveAt(0);
+            }
             listBoxOutput.Items.Add(line);
             listBoxOutput.TopIndex = listBoxOutput.Items.Count - 1;
         }
@@ -193,7 +196,8 @@ namespace WinREPO
                 strGitClonePath = strGitClonePath.Substring(0, txtRepoURL.Text.IndexOf("-b"));
             }
 
-            _strRootDir = strGitClonePath.Substring(strGitClonePath.LastIndexOf("/") + 1);
+            _strRootDir = strGitClonePath.Substring(0 , strGitClonePath.IndexOf("-b") - 1);
+            _strRootDir = _strRootDir.Substring(_strRootDir.LastIndexOf("/") + 1);
         }
 
         private Boolean checkIfRepoExists(String strPath)
@@ -249,7 +253,7 @@ namespace WinREPO
             {
                 strCommand += "git clone " + strGitClonePath + _strGitProgress + _strNewline + "cd " + _strRootDir +
                     _strNewline + strGitTag + _strNewline + "cd .." + _strNewline +
-                    "mv " + _strRootDir + ".repo" + _strNewline + _strHideRepoDir + _strNewline;
+                    "mv " + _strRootDir + " .repo" + _strNewline + _strHideRepoDir + _strNewline;
             }
             /* At both places we are back in the directory where the .repo is located.
              Now we need to create a manifests directory and put the xml file as a default.xml in there.
@@ -281,7 +285,7 @@ namespace WinREPO
             }
         }
 
-        private const int MAX_PATH = 200;
+        private const int MAX_PATH = 250;
         private Boolean isPathExceedingMaxPath(String strPath)
         {
             if (strPath.Length > MAX_PATH)
@@ -334,23 +338,34 @@ namespace WinREPO
                 strCommand += "git clone " + _manifestParser._manifestConfig._remoteServerConfigs[iServerConfIt]._strRemoteFetch +
                     _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strName + " " +
                     _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strPath + " -b " +
+                    ((_manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strRevision == null) ?
+                    _manifestParser._manifestConfig._strDefaultRevision : _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strRevision) +
+                    // Nothing like a branch according to manifest-format.txt
+/*
                     ((_manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strBranch == null) ?
                     _manifestParser._manifestConfig._strDefaultRevision : _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strBranch) +
+ */ 
                     _strGitProgress + _strNewline;
                 /* Now move into that directory where we just cloned!*/
                 strCommand += "cd " + _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strPath + _strNewline;
             }
 
-            /* And do a checkout */
+            /* And do a checkout 
             strCommand += "git checkout " +
                 ((_manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strRevision == null) ? 
                     _manifestParser._manifestConfig._strDefaultRevision : 
                     _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strRevision) + _strNewline;
-
+*/
             AppendLine(strCommand);
             startPowerShellScript(strCommand);
         }
 
+        /* TODO:
+         * 1. Get the valid XML paths for all the files in the .repo structure.
+         * 2. Create a manifest.xml for only the file outside the local_manifest.xml.
+         * 3. Parse any local_manifest.xml as well. Improve the sync functionality to
+         *    look at all the xml files including the local_manifest.xml file.
+         */
         private String getRepoXMLFilePath(String strBasePath)
         {
             String strResult = "";
