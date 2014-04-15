@@ -86,7 +86,7 @@ namespace WinREPO
                 System.Diagnostics.Process _process = new System.Diagnostics.Process();
                 _process.StartInfo.FileName = _strPowerShellPath;
                 _process.StartInfo.Verb = "runas";
-                _process.StartInfo.Arguments = "-ExecutionPolicy remotesigned -noexit \" & \"set-executionpolicy remotesigned\r\n";
+                _process.StartInfo.Arguments = "-ExecutionPolicy Unrestricted -noexit \" & \"set-executionpolicy Unrestricted\r\n";
                 _process.StartInfo.UseShellExecute = true;
                 _process.Start();
             }

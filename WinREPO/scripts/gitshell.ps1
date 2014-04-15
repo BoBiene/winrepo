@@ -28,7 +28,7 @@ if ($env:gitshell -eq $null) {
   $pGitPath = $env:gitshell
   $msBuildPath = "$env:SystemRoot\Microsoft.NET\Framework\v4.0.30319"
 
-  $env:Path = "$env:Path;$pGitPath\cmd;$pGitPath\bin;$msbuildPath"
+  $env:Path = "$env:Path;$pGitPath;$pGitPath\bin;$msbuildPath"
 
   Pop-Location
 

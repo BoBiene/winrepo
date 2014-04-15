@@ -52,7 +52,7 @@ namespace WinREPO
 
         private String _strRootDir = "";
 
-        private const String _strSetExecutionPolicy = "set-executionpolicy remotesigned\r\n";
+        private const String _strSetExecutionPolicy = "set-executionpolicy Unrestricted\r\n";
         public const String _strNewline = "\r\n";
         private const String _strHideRepoDir = "attrib +h .repo";
         private const String _strGitProgress = " --progress";
@@ -196,7 +196,7 @@ namespace WinREPO
                 strGitClonePath = strGitClonePath.Substring(0, txtRepoURL.Text.IndexOf("-b"));
             }
 
-            _strRootDir = strGitClonePath.Substring(0 , strGitClonePath.IndexOf("-b") - 1);
+            _strRootDir = txtRepoURL.Text.Substring(0, txtRepoURL.Text.IndexOf("-b") - 1);
             _strRootDir = _strRootDir.Substring(_strRootDir.LastIndexOf("/") + 1);
         }
 
@@ -323,9 +323,9 @@ namespace WinREPO
                 /* Prepare the nice command... */
                 strCommand += "git clone " + _manifestParser._manifestConfig._remoteServerConfigs[iServerConfIt]._strRemoteFetch +
                     _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strName + " " +
-                    _tempCheckoutPath + " -b " +
+                    _tempCheckoutPath /*+ " -b " +
                     ((_manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strBranch == null) ?
-                    _manifestParser._manifestConfig._strDefaultRevision : _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strBranch) +
+                    _manifestParser._manifestConfig._strDefaultRevision : _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strBranch)*/ +
                     _strGitProgress + _strNewline;
                 /* Now move into that directory where we just cloned!*/
                 String strTemp = _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strPath;
@@ -337,25 +337,20 @@ namespace WinREPO
                 /* Prepare the nice command... */
                 strCommand += "git clone " + _manifestParser._manifestConfig._remoteServerConfigs[iServerConfIt]._strRemoteFetch +
                     _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strName + " " +
-                    _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strPath + " -b " +
-                    ((_manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strRevision == null) ?
-                    _manifestParser._manifestConfig._strDefaultRevision : _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strRevision) +
-                    // Nothing like a branch according to manifest-format.txt
-/*
+                    _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strPath /*+ " -b " +
                     ((_manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strBranch == null) ?
-                    _manifestParser._manifestConfig._strDefaultRevision : _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strBranch) +
- */ 
+                    _manifestParser._manifestConfig._strDefaultRevision : _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strBranch)*/ +
                     _strGitProgress + _strNewline;
                 /* Now move into that directory where we just cloned!*/
                 strCommand += "cd " + _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strPath + _strNewline;
             }
 
-            /* And do a checkout 
+            /* And do a checkout */
             strCommand += "git checkout " +
-                ((_manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strRevision == null) ? 
-                    _manifestParser._manifestConfig._strDefaultRevision : 
+                ((_manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strRevision == null) ?
+                    _manifestParser._manifestConfig._strDefaultRevision :
                     _manifestParser._manifestConfig._projectPathConfigs[_currentProjectNumber]._strRevision) + _strNewline;
-*/
+
             AppendLine(strCommand);
             startPowerShellScript(strCommand);
         }
