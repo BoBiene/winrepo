@@ -76,7 +76,7 @@ namespace WinREPO
             _frmOptions = new frmOptions(this);
             _frmOptions.readRegistryKeysIfAny();
 
-            if (_frmOptions._strGitFolderPath.Length < 1 || _frmOptions._strPowerShellPath.Length < 1)
+            if (_frmOptions._strGitFolderPath == null || _frmOptions._strPowerShellPath == null)
             {
                 MessageBox.Show("Please Setup the proper variables in Settings and fix your PowerShell and SSHConfigs. Otherwise WinREPO will not work!!!");
                 _frmOptions.ShowDialog();

@@ -65,8 +65,21 @@ namespace WinREPO
         {
             _strGitFolderPath = (String)Registry.GetValue(_strKeyName, _strRegGitHubPath, "");
             _strPowerShellPath = (String) Registry.GetValue(_strKeyName, _strRegPowerShellPath, "");
+            if ((_strGitFolderPath == null) || (_strPowerShellPath == null))
+            {
+                createRegistryKeysIfNeeded();
+                readRegistryKeysIfAny();
+            }
             txtGitShellPath.Text = _strGitFolderPath;
             txtPowerShellPath.Text = _strPowerShellPath;
+        }
+
+        private void createRegistryKeysIfNeeded()
+        {
+            _strGitFolderPath = "C:\\Program Files (x86)\\Git\\bin";
+            _strPowerShellPath = "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
+            Registry.SetValue(_strKeyName, _strRegGitHubPath, _strGitFolderPath);
+            Registry.SetValue(_strKeyName, _strRegPowerShellPath, _strPowerShellPath);
         }
 
         private void btnBrowseGitShellPath_Click(object sender, EventArgs e)
@@ -88,7 +101,14 @@ namespace WinREPO
                 _process.StartInfo.Verb = "runas";
                 _process.StartInfo.Arguments = "-ExecutionPolicy Unrestricted -noexit \" & \"set-executionpolicy Unrestricted\r\n";
                 _process.StartInfo.UseShellExecute = true;
-                _process.Start();
+                try
+                {
+                    _process.Start();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Exception occured while launching powershell fix... WTF. I will ignore!" + e.Message);
+                }
             }
         }
         private void btnSave_Click(object sender, EventArgs e)
